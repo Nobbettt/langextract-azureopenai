@@ -61,7 +61,7 @@ def update_file_version(file_path: Path, old_version: str, new_version: str):
             r'(\[project\].*?\n)version = ["\'][^"\']+["\']',
             rf'\1version = "{new_version}"',
             content,
-            flags=re.DOTALL
+            flags=re.DOTALL,
         )
 
     file_path.write_text(content)
