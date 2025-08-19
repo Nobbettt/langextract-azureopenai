@@ -1,0 +1,180 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "langextract-azureopenai"
+version = "0.1.0"
+description = "LangExtract provider plugin for Azure OpenAI"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+    {name = "LangExtract Contributors"},
+]
+maintainers = [
+    {name = "LangExtract Contributors"},
+]
+keywords = [
+    "langextract",
+    "azure-openai", 
+    "openai",
+    "llm",
+    "provider",
+    "plugin",
+    "extraction",
+    "nlp"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11", 
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Linguistic",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "langextract>=1.0.0",
+    "openai>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-mock>=3.10.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "black>=22.0.0",
+    "isort>=5.0.0",
+]
+test = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21.0", 
+    "pytest-mock>=3.10.0",
+]
+docs = [
+    "mkdocs>=1.4.0",
+    "mkdocs-material>=8.5.0",
+    "mkdocs-gen-files>=0.4.0",
+    "mkdocs-literate-nav>=0.5.0",
+    "mkdocs-section-index>=0.3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/google/langextract"
+Documentation = "https://github.com/google/langextract/blob/main/README.md"
+Repository = "https://github.com/google/langextract"
+"Bug Tracker" = "https://github.com/google/langextract/issues" 
+Changelog = "https://github.com/google/langextract/releases"
+
+[project.entry-points."langextract.providers"]
+azureopenai = "langextract_azureopenai.provider:AzureOpenAILanguageModel"
+
+# Hatchling configuration
+[tool.hatch.build.targets.wheel]
+packages = ["langextract_azureopenai"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/langextract_azureopenai",
+    "/README.md",
+    "/LICENSE", 
+    "/TESTING.md",
+    "/PROGRESS_NOTES.md",
+]
+exclude = [
+    "/.git",
+    "/dist",
+    "*.egg-info",
+    "__pycache__",
+    "*.pyc",
+    "*.pyo",
+    "azure_*.jsonl",
+    "azure_*.html",
+    "test_*.py",
+    "example_*.py",
+]
+
+[tool.hatch.version]
+path = "langextract_azureopenai/__init__.py"
+
+# Development tools configuration
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings  
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501",  # line too long, handled by black
+    "B008",  # do not perform function calls in argument defaults
+    "B904",  # Allow raising exceptions without from e, for brevity
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"test_*.py" = ["B011", "F401", "F811"]
+
+[tool.black]
+target-version = ["py310"]
+line-length = 88
+skip-string-normalization = true
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["langextract_azureopenai"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "langextract_azureopenai"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-config",
+    "--strict-markers",
+    "-ra",
+]
+markers = [
+    "integration: marks tests as integration tests (may require credentials)",
+    "unit: marks tests as unit tests (no external dependencies)",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["langextract_azureopenai"]
