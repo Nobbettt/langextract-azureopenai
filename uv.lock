@@ -762,7 +762,7 @@ wheels = [
 
 [[package]]
 name = "langextract-azureopenai"
-version = "0.1.0"
+version = "0.1.5"
 source = { editable = "." }
 dependencies = [
     { name = "langextract" },

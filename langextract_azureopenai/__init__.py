@@ -3,4 +3,4 @@
 from langextract_azureopenai.provider import AzureOpenAILanguageModel
 
 __all__ = ['AzureOpenAILanguageModel']
-__version__ = "0.1.4"
+__version__ = "0.1.5"
