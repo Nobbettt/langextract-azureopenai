@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write  # For trusted publishing to PyPI
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install UV
+      uses: astral-sh/setup-uv@v3
+    
+    - name: Set up Python
+      run: uv python install 3.11
+    
+    - name: Install dependencies
+      run: uv sync --dev
+    
+    - name: Run tests
+      run: python scripts/run_tests.py
+    
+    - name: Build package
+      run: uv build
+    
+    - name: Validate build
+      run: python scripts/check_build.py
+    
+    - name: Extract version from tag
+      id: extract_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+    
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ steps.extract_version.outputs.VERSION }}
+        body: |
+          ## LangExtract Azure OpenAI Provider v${{ steps.extract_version.outputs.VERSION }}
+          
+          ### Installation
+          ```bash
+          uv add langextract-azureopenai==${{ steps.extract_version.outputs.VERSION }}
+          # or
+          pip install langextract-azureopenai==${{ steps.extract_version.outputs.VERSION }}
+          ```
+          
+          ### What's Changed
+          - See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details
+          
+          **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ steps.extract_version.outputs.VERSION }}...HEAD
+        draft: false
+        prerelease: false
+    
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/
+        asset_name: distribution-files
+        asset_content_type: application/zip
+    
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        # Uses OIDC trusted publishing, no token needed
+        # Configure at: https://pypi.org/manage/account/publishing/
+        repository-url: https://upload.pypi.org/legacy/
