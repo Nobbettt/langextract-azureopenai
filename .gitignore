@@ -20,7 +20,7 @@ ENV/
 
 # UV specific
 .uv/
-uv.lock
+# uv.lock - commented out to allow committing lock file for reproducible CI builds
 
 # Testing & coverage
 .pytest_cache/
