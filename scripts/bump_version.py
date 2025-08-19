@@ -56,9 +56,12 @@ def update_file_version(file_path: Path, old_version: str, new_version: str):
             content,
         )
     elif file_path.name == "pyproject.toml":
-        # Update version = "x.y.z"
+        # Update version = "x.y.z" in [project] section only
         content = re.sub(
-            r'version = ["\'][^"\']+["\']', f'version = "{new_version}"', content
+            r'(\[project\].*?\n)version = ["\'][^"\']+["\']',
+            rf'\1version = "{new_version}"',
+            content,
+            flags=re.DOTALL
         )
 
     file_path.write_text(content)
