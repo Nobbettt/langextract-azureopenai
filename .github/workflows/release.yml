@@ -41,12 +41,9 @@ jobs:
       run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
     
     - name: Create GitHub Release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ steps.extract_version.outputs.VERSION }}
+        name: Release ${{ steps.extract_version.outputs.VERSION }}
         body: |
           ## LangExtract Azure OpenAI Provider v${{ steps.extract_version.outputs.VERSION }}
           
@@ -59,20 +56,9 @@ jobs:
           
           ### What's Changed
           - See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details
-          
-          **Full Changelog**: https://github.com/${{ github.repository }}/compare/v${{ steps.extract_version.outputs.VERSION }}...HEAD
+        files: dist/*
         draft: false
         prerelease: false
-    
-    - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/
-        asset_name: distribution-files
-        asset_content_type: application/zip
     
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
